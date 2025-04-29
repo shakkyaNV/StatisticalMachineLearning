@@ -7,6 +7,9 @@ This repository will contain
 - Group Project
     - Movie Recommender Model
         - Actor Crtic
+            - Article: https://arxiv.org/pdf/1801.00209
+            - Steps for Code (included in the ipynb file): Code/actor_critic.ipynb
+            - Original Repo: https://github.com/ShreenidhiN/Reinforcement-Learning-based-Movie-Recommendation/tree/main
         - Armed Bandit
         - SVD
         - (optinal) Cosine Similarity (TF-IDF)
