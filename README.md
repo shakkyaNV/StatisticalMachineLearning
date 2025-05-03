@@ -17,3 +17,4 @@ This repository will contain
 		- **Results to be edited**
         - SVD
         - (optinal) Cosine Similarity (TF-IDF)
+		- Ignored
