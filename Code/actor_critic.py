@@ -34,6 +34,8 @@ from datetime import datetime as dtime
 
 ## 1. Setup
 now = dtime.now().strftime("%Y-%m-%d_%H-%M-%S")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 log_path = f"/home/sranasin/StatisticalMachineLearning/Logs/log_{now}.log"
 logging.basicConfig(
     filename=log_path,
@@ -900,7 +902,7 @@ def train(sess, environment, actor, critic, embeddings, history_length, ra_lengt
     start_time = time.time()
 
   writer.close()
-  tf.train.Saver().save(sess, '../Data/models_total.h5', write_meta_graph=False)
+  tf.train.Saver().save(sess, os.path.join(BASE_DIR, "..", "Data", "models_total.h5"), write_meta_graph=False)
   return all_rewards
 
 
@@ -923,33 +925,33 @@ gamma = 0.9 # Γ (Gamma) in Equation (4)
 buffer_size = 1000000 # Size of replay memory D in article ========= 1000000/10000
 fixed_length = True # Fixed memory length
 
-dg = DataGenerator('ml-100k/u.data', 'ml-100k/u.item')
+dg = DataGenerator(os.path.join(BASE_DIR, "ml-100k", "u.data"), os.path.join(BASE_DIR, "ml-100k", "u.item"))
 dg.get_train_test_split(0.8, seed=42) # uncomment
 
-dg.write_csv('../Data/train_total.csv', dg.train, nb_states=[history_length], nb_actions=[ra_length]) # uncomment
-dg.write_csv('../Data/test_total.csv', dg.test, nb_states=[history_length], nb_actions=[ra_length])# uncomment
+dg.write_csv(os.path.join(BASE_DIR, "..", "Data", "train_total.csv"), dg.train, nb_states=[history_length], nb_actions=[ra_length]) # uncomment
+dg.write_csv(os.path.join(BASE_DIR, "..", "Data", "test_total.csv"), dg.test, nb_states=[history_length], nb_actions=[ra_length])# uncomment
 
-data = file_reading('../Data/train_total.csv')# uncomment
+data = file_reading(os.path.join(BASE_DIR, "..", "Data", "train_total.csv"))# uncomment
 
 
 # In[ ]:
 
 
 if True: # Generate embeddings?
-  eg = EmbeddingsGenerator(dg.user_train, pd.read_csv('ml-100k/u.data', sep='\t', names=['userId', 'itemId', 'rating', 'timestamp']))
+  eg = EmbeddingsGenerator(dg.user_train, pd.read_csv(os.path.dir(BASE_DIR, "ml-100k", "u.data"), sep='\t', names=['userId', 'itemId', 'rating', 'timestamp']))
   eg.train(nb_epochs=3)
   train_loss, train_accuracy = eg.test(dg.user_train)
   logging.info('Train set: Loss=%.4f ; Accuracy=%.1f%%' % (train_loss, train_accuracy * 100))
   test_loss, test_accuracy = eg.test(dg.user_test)
   logging.info('Test set: Loss=%.4f ; Accuracy=%.1f%%' % (test_loss, test_accuracy * 100))
-  eg.save_embeddings('../Data/embeddings.csv')
+  eg.save_embeddings(os.path.join("..", "Data", "embeddings.csv"))
 
 
 # In[ ]:
 
 sys.exit(0)
 
-embeddings = Embeddings(embeddings_reading('../Data/embeddings.csv'))
+embeddings = Embeddings(embeddings_reading(os.path.join("..", "Data", "embeddings.csv")))
 
 state_space_size = embeddings.size() * history_length
 action_space_size = embeddings.size() * ra_length
@@ -970,13 +972,13 @@ all_rewards = train(sess, environment, actor, critic, embeddings, history_length
 
 # In[ ]:
 
-
-plt.plot(all_rewards)
-plt.xlabel("Episode")
-plt.ylabel("Total Reward")
-plt.title("Actor-Critic: Episode Reward Over Time")
-plt.grid(True)
-plt.show()
+#
+# plt.plot(all_rewards)
+# plt.xlabel("Episode")
+# plt.ylabel("Total Reward")
+# plt.title("Actor-Critic: Episode Reward Over Time")
+# plt.grid(True)
+# plt.show()
 
 
 # ## **9. Testing**
