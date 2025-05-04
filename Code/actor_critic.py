@@ -949,8 +949,6 @@ if True: # Generate embeddings?
 
 # In[ ]:
 
-sys.exit(0)
-
 embeddings = Embeddings(embeddings_reading(os.path.join("..", "Data", "embeddings.csv")))
 
 state_space_size = embeddings.size() * history_length
@@ -1034,20 +1032,21 @@ def test_actor(actor, test_df, embeddings, dict_embeddings, ra_length, history_l
 
 ratings, unknown, random_seen = test_actor(actor, dg.train, embeddings, dict_embeddings, ra_length, history_length, target=False, nb_rounds=2)
 logging.info('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
-
+ratings_train_False = pd.DataFrame(ratings, columns = 'Rating Train False')
+ratings_train_False.to_csv(os.path.join(BASE_DIR, "..", "Data", f"ratings_train_False_{now}.csv"), index=False)
 
 # Comparison between the actual predictions made by the model and the randomly generated predictions
 
 # In[ ]:
 
-
-plt.subplot(1, 2, 1)
-plt.hist(ratings)
-plt.title('Predictions ; Mean = %.4f' % (np.mean(ratings)))
-plt.subplot(1, 2, 2)
-plt.hist(random_seen)
-plt.title('Random ; Mean = %.4f' % (np.mean(random_seen)))
-plt.show()
+#
+# plt.subplot(1, 2, 1)
+# plt.hist(ratings)
+# plt.title('Predictions ; Mean = %.4f' % (np.mean(ratings)))
+# plt.subplot(1, 2, 2)
+# plt.hist(random_seen)
+# plt.title('Random ; Mean = %.4f' % (np.mean(random_seen)))
+# plt.show()
 
 
 # Target = True
@@ -1057,19 +1056,20 @@ plt.show()
 
 ratings, unknown, random_seen = test_actor(actor, dg.train, embeddings, dict_embeddings, ra_length, history_length, target=True, nb_rounds=2)
 logging.info('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
-
+ratings_train_true = pd.DataFrame(ratings, columns = 'Rating Train True')
+ratings_train_true.to_csv(os.path.join(BASE_DIR, "..", "Data", f"ratings_train_true_{now}.csv"), index=False)
 
 # In[ ]:
-
-
-plt.subplot(1, 2, 1)
-plt.hist(ratings)
-plt.title('Predictions ; Mean = %.4f' % (np.mean(ratings)))
-plt.subplot(1, 2, 2)
-plt.hist(random_seen)
-plt.title('Random ; Mean = %.4f' % (np.mean(random_seen)))
-plt.show()
-
+#
+#
+# plt.subplot(1, 2, 1)
+# plt.hist(ratings)
+# plt.title('Predictions ; Mean = %.4f' % (np.mean(ratings)))
+# plt.subplot(1, 2, 2)
+# plt.hist(random_seen)
+# plt.title('Random ; Mean = %.4f' % (np.mean(random_seen)))
+# plt.show()
+#
 
 # ###**Test Set**
 
@@ -1080,21 +1080,22 @@ plt.show()
 
 ratings, unknown, random_seen = test_actor(actor, dg.test, embeddings, dict_embeddings, ra_length, history_length, target=False, nb_rounds=1)
 logging.info('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
-
+ratings_test_False = pd.DataFrame(ratings, columns = 'Rating test False')
+ratings_test_False.to_csv(os.path.join(BASE_DIR, "..", "Data", f"ratings_test_False_{now}.csv"), index=False)
 
 # Comparison between the actual predictions made by the model and the randomly generated predictions
 
 # In[ ]:
 
-
-plt.subplot(1, 2, 1)
-plt.hist(ratings)
-plt.title('Predictions ; Mean = %.4f' % (np.mean(ratings)))
-plt.subplot(1, 2, 2)
-plt.hist(random_seen)
-plt.title('Random ; Mean = %.4f' % (np.mean(random_seen)))
-plt.show()
-
+#
+# plt.subplot(1, 2, 1)
+# plt.hist(ratings)
+# plt.title('Predictions ; Mean = %.4f' % (np.mean(ratings)))
+# plt.subplot(1, 2, 2)
+# plt.hist(random_seen)
+# plt.title('Random ; Mean = %.4f' % (np.mean(random_seen)))
+# plt.show()
+#
 
 # Target = True
 
@@ -1103,18 +1104,19 @@ plt.show()
 
 ratings, unknown, random_seen = test_actor(actor, dg.test, embeddings, dict_embeddings, ra_length, history_length, target=True, nb_rounds=2)
 logging.info('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
-
+ratings_test_true = pd.DataFrame(ratings, columns = 'Rating Test True')
+ratings_test_true.to_csv(os.path.join(BASE_DIR, "..", "Data", f"ratings_test_true_{now}.csv"), index=False)
 
 # In[ ]:
 
-
-plt.subplot(1, 2, 1)
-plt.hist(ratings)
-plt.title('Predictions ; Mean = %.4f' % (np.mean(ratings)))
-plt.subplot(1, 2, 2)
-plt.hist(random_seen)
-plt.title('Random ; Mean = %.4f' % (np.mean(random_seen)))
-plt.show()
+#
+# plt.subplot(1, 2, 1)
+# plt.hist(ratings)
+# plt.title('Predictions ; Mean = %.4f' % (np.mean(ratings)))
+# plt.subplot(1, 2, 2)
+# plt.hist(random_seen)
+# plt.title('Random ; Mean = %.4f' % (np.mean(random_seen)))
+# plt.show()
 
 
 # _______________________________________________________
