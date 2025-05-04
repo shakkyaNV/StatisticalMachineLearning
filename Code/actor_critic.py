@@ -36,9 +36,9 @@ from datetime import datetime as dtime
 now = dtime.now().strftime("%Y-%m-%d_%H-%M-%S")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-log_path = f"/home/sranasin/StatisticalMachineLearning/Logs/log_{now}.log"
+log_path = f"log_{now}.log"
 logging.basicConfig(
-    filename=log_path,
+    filename=os.path.join(BASE_DIR, "..", "Logs", log_path),
     filemode="w",  # Overwrite each time; use "a" to append
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s"
@@ -938,7 +938,7 @@ data = file_reading(os.path.join(BASE_DIR, "..", "Data", "train_total.csv"))# un
 
 
 if True: # Generate embeddings?
-  eg = EmbeddingsGenerator(dg.user_train, pd.read_csv(os.path.dir(BASE_DIR, "ml-100k", "u.data"), sep='\t', names=['userId', 'itemId', 'rating', 'timestamp']))
+  eg = EmbeddingsGenerator(dg.user_train, pd.read_csv(os.path.join(BASE_DIR, "ml-100k", "u.data"), sep='\t', names=['userId', 'itemId', 'rating', 'timestamp']))
   eg.train(nb_epochs=3)
   train_loss, train_accuracy = eg.test(dg.user_train)
   logging.info('Train set: Loss=%.4f ; Accuracy=%.1f%%' % (train_loss, train_accuracy * 100))
