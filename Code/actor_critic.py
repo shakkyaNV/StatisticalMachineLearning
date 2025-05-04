@@ -13,41 +13,10 @@
 # 
 
 # Reference : 
-# 
-# *   https://arxiv.org/pdf/1801.00209.pdf
-
-# ##**1. Importing Required libraries**
-
-# In[1]:
-
-
-# from google.colab import drive
-# drive.mount('/content/drive')
-
-
-# In[1]:
 
 
 import os
-# os.chdir('/content/drive/MyDrive/RL/Final Package')
-# from google.colab import files
-
-
-# In[ ]:
-
-
-
-
-
-# In[2]:
-
-
-# %tensorflow_version 1.x
-
-
-# In[3]:
-
-
+import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -56,19 +25,23 @@ import time
 import itertools
 import random
 import csv
-
+import logging
 import tensorflow as tf
 import keras.backend as K
 from keras import Sequential
 from keras.layers import Dense, Dropout
+from datetime import datetime as dtime
 
-
-# In[4]:
-
-
-tf.__version__
-
-
+## 1. Setup
+now = dtime.now().strftime("%Y-%m-%d_%H-%M-%S")
+log_path = f"/home/sranasin/StatisticalMachineLearning/Logs/log_{now}.log"
+logging.basicConfig(
+    filename=log_path,
+    filemode="w",  # Overwrite each time; use "a" to append
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+logging.info("Logging Started")
 # ## **2. Data Extraction and Loading**
 
 # **The MovieLens dataset containing a set of movie ratings from the MovieLens website is used for recommendation**
@@ -279,7 +252,7 @@ class EmbeddingsGenerator:
     Trains the model from train_users's history
     '''
     for i in range(nb_epochs):
-      print('%d/%d' % (i+1, nb_epochs))
+      logging.info('%d/%d' % (i+1, nb_epochs))
       batch = [self.generate_input(user_id=np.random.choice(self.train_users) - 1) for _ in range(batch_size)]
       X_train = np.array([b[0] for b in batch])
       y_train = np.array([b[1] for b in batch])
@@ -923,7 +896,7 @@ def train(sess, environment, actor, critic, embeddings, history_length, ra_lengt
     all_rewards.append(session_reward)
 
     str_loss = str('Loss=%0.4f' % session_critic_loss)
-    print(('Episode %d/%d Reward=%d Time=%ds ' + (str_loss if replay else 'No replay')) % (i_session + 1, nb_episodes, session_reward, time.time() - start_time))
+    logging.info(('Episode %d/%d Reward=%d Time=%ds ' + (str_loss if replay else 'No replay')) % (i_session + 1, nb_episodes, session_reward, time.time() - start_time))
     start_time = time.time()
 
   writer.close()
@@ -964,16 +937,17 @@ data = file_reading('../Data/train_total.csv')# uncomment
 
 if True: # Generate embeddings?
   eg = EmbeddingsGenerator(dg.user_train, pd.read_csv('ml-100k/u.data', sep='\t', names=['userId', 'itemId', 'rating', 'timestamp']))
-  eg.train(nb_epochs=25)
+  eg.train(nb_epochs=3)
   train_loss, train_accuracy = eg.test(dg.user_train)
-  print('Train set: Loss=%.4f ; Accuracy=%.1f%%' % (train_loss, train_accuracy * 100))
+  logging.info('Train set: Loss=%.4f ; Accuracy=%.1f%%' % (train_loss, train_accuracy * 100))
   test_loss, test_accuracy = eg.test(dg.user_test)
-  print('Test set: Loss=%.4f ; Accuracy=%.1f%%' % (test_loss, test_accuracy * 100))
+  logging.info('Test set: Loss=%.4f ; Accuracy=%.1f%%' % (test_loss, test_accuracy * 100))
   eg.save_embeddings('../Data/embeddings.csv')
 
 
 # In[ ]:
 
+sys.exit(0)
 
 embeddings = Embeddings(embeddings_reading('../Data/embeddings.csv'))
 
@@ -1057,7 +1031,7 @@ def test_actor(actor, test_df, embeddings, dict_embeddings, ra_length, history_l
 
 
 ratings, unknown, random_seen = test_actor(actor, dg.train, embeddings, dict_embeddings, ra_length, history_length, target=False, nb_rounds=2)
-print('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
+logging.info('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
 
 
 # Comparison between the actual predictions made by the model and the randomly generated predictions
@@ -1080,7 +1054,7 @@ plt.show()
 
 
 ratings, unknown, random_seen = test_actor(actor, dg.train, embeddings, dict_embeddings, ra_length, history_length, target=True, nb_rounds=2)
-print('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
+logging.info('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
 
 
 # In[ ]:
@@ -1103,7 +1077,7 @@ plt.show()
 
 
 ratings, unknown, random_seen = test_actor(actor, dg.test, embeddings, dict_embeddings, ra_length, history_length, target=False, nb_rounds=1)
-print('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
+logging.info('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
 
 
 # Comparison between the actual predictions made by the model and the randomly generated predictions
@@ -1126,7 +1100,7 @@ plt.show()
 
 
 ratings, unknown, random_seen = test_actor(actor, dg.test, embeddings, dict_embeddings, ra_length, history_length, target=True, nb_rounds=2)
-print('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
+logging.info('%0.1f%% unknown' % (100 * unknown / (len(ratings) + unknown)))
 
 
 # In[ ]:
